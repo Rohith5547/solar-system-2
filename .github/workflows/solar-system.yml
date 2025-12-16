@@ -23,6 +23,8 @@ jobs:
           - nodejs_version: 18
             operating_system: macos-latest
     runs-on: ${{matrix.operating_system}}
+    permissions:
+      packages: write
     container:
       image: node:18
     services:
