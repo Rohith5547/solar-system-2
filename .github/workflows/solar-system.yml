@@ -18,13 +18,11 @@ jobs:
     strategy:
       matrix:
         nodejs_version: [18, 20]
-        operating_system: [ubuntu-latest, macos-latest]
+        operating_system: [ubuntu-latest]
         exclude:
           - nodejs_version: 18
             operating_system: macos-latest
     runs-on: ${{matrix.operating_system}}
-    permissions:
-      packages: write
     container:
       image: node:18
     services:
