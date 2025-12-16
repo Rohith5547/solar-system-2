@@ -136,12 +136,10 @@ jobs:
             -e MONGO_USERNAME=$MONGO_USERNAME \
             -e MONGO_PASSWORD=$MONGO_PASSWORD \
             ${{ vars.DOCKERHUB_USERNAME }}/solar-system:${{ github.sha }}
-
-          IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' solar-system-app)
-          echo "Container IP: $IP"
+          sleep 5
 
           echo "Verifying /live endpoint"
-          wget -q -O - http://127.0.0.1:3000/live | grep live
+          wget -qO- http://127.0.0.1:3000/live | grep live
         
       - name: Docker Build and Push
         uses: docker/build-push-action@v4
@@ -149,6 +147,6 @@ jobs:
           context: .
           push: true
           tags: |
-             ${{ vars.DOCKERHUB_USERNAME }}/solar-system:${{ github.sha }}
-             ghcr.io/${{github.repository_owner}}/solar-system:${{github.sha}}
+            ${{ vars.DOCKERHUB_USERNAME }}/solar-system:${{ github.sha }}
+            ghcr.io/${{github.repository_owner}}/solar-system:${{github.sha}}
 
