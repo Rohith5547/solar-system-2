@@ -229,7 +229,12 @@ jobs:
         
       - name: Port-forward service
         run: |
-          kubectl -n ${{ vars.NAMESPACE }} port-forward svc/solar-system 8080:80 &
+          SERVICE_PORT=$(kubectl -n ${{ vars.NAMESPACE }} get svc solar-system \
+            -o jsonpath='{.spec.ports[0].port}')
+
+          echo "Detected service port: $SERVICE_PORT"
+
+          kubectl -n ${{ vars.NAMESPACE }} port-forward svc/solar-system 8080:$SERVICE_PORT &
           sleep 5
 
       # 1️⃣1️⃣ Integration test
