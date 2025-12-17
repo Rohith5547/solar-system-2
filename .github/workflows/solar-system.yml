@@ -222,3 +222,33 @@ jobs:
       - name: Deploy to Dev Environment
         run: |
           kubectl apply -n ${{ vars.NAMESPACE }} -f kubernetes/development
+
+      - name: Wait for rollout
+        run: |
+          kubectl rollout status deployment/solar-system -n ${{ vars.NAMESPACE }}
+
+    # 🔑 THIS REPLACES "INGRESS HOST" FOR KIND
+      - name: Set App Service URL (KIND)
+        id: set-app-url
+        run: |
+          NODE_PORT=$(kubectl -n ${{ vars.NAMESPACE }} \
+            get svc solar-system \
+            -o jsonpath='{.spec.ports[0].nodePort}')
+
+          echo "APP_URL=http://localhost:$NODE_PORT" >> "$GITHUB_OUTPUT"
+    outputs:
+          APP_URL: ${{ steps.set-app-url.outputs.APP_URL }}
+
+        
+  integration-testing:
+    name: Dev Integration Testing
+    needs: dev-deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Test `/live` Endpoint
+        env:
+          URL: ${{ needs.dev-deploy.outputs.APP_URL }}
+        run: |
+          echo "Testing endpoint: $URL/live"
+          curl -s "$URL/live" | jq -r .status | grep -iq live        
