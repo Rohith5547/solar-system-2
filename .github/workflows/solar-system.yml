@@ -160,4 +160,26 @@ jobs:
           tags: |
              ${{ vars.DOCKERHUB_USERNAME }}/solar-system:${{ github.sha }}
              ghcr.io/rohith5547/solar-system:${{github.sha}}
+  
+  dev-deploy:
+    needs: containerization
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Installing Kubectl CLI in runner to interact with cluster
+        uses: azure/setup-kubectl@v3
+        with:
+          version: v1.26.0
 
+      - name: Create KIND cluster
+        uses: helm/kind-action@v1
+        with:
+          cluster_name: dev-cluster
+
+      - name: Fetch Kubernetes Cluster Details
+        run: |
+          kubectl version --short
+          echo "------------------------------------------"
+          kubectl get nodes
