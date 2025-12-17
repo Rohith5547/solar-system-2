@@ -237,7 +237,7 @@ jobs:
 
           echo "APP_URL=http://localhost:$NODE_PORT" >> "$GITHUB_OUTPUT"
     outputs:
-          APP_URL: ${{ steps.set-app-url.outputs.APP_URL }}
+      APP_URL: ${{ steps.set-app-url.outputs.APP_URL }}
 
         
   integration-testing:
